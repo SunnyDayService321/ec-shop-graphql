@@ -37,7 +37,7 @@
 						<div id="navi">
 							<ul>
 								<li><a th:href="@{/}">ホーム</a></li>
-								<li><a th:href="@{/create}">商品登録</a></li>
+								<li><a th:href="@{/item/create}">商品登録</a></li>
 							</ul>
 						</div>
 					</nav>
@@ -72,6 +72,7 @@
 							  <th>商品名</th>
 							  <th>価格</th>
 							  <th>商品説明</th>
+							  <th>お気に入り</th>
 						    </th>
 						   </thead> 
 						   <tbody>
@@ -81,12 +82,24 @@
 							 <td th:text="*{name}"></td>
 							 <td th:text="*{price} + 円"></td>
 							 <td th:text="*{content}"></td>
+
+							 <td>
+							     <button type="button" 
+							             th:onclick="'toggleFavorite(' + *{id} + ', this)'" 
+							             style="border:none; background:none; cursor:pointer; font-size: 1.2rem;">
+							         <span class="star-icon" 
+							               th:text="*{favorite} ? '★' : '☆'" 
+							               th:style="*{favorite} ? 'color: #ffcc00;' : 'color: #ccc;'">
+							         </span>
+							     </button>
+							 </td>
+
 							 
 							 <td>
-							  <a class="btn btn-default btn-xs" th:href="@{/itemlists/{id}/edit(id=*{id})}">編集</a>
+							  <a class="btn btn-default btn-xs" th:href="@{/item/itemlists/{id}/edit(id=*{id})}">編集</a>
 							 </td>
 							 <td>
-							  <a class="btn btn-default btn-xs" th:href="@{/itemlists/{id}/delete(id=*{id})}">削除</a>
+							  <a class="btn btn-default btn-xs" th:href="@{/item/itemlists/{id}/delete(id=*{id})}">削除</a>
 							 </td>
                            <td>
                        <!--
@@ -97,8 +110,21 @@
             </td>
           </tr>
         </tbody>
-     </table>	
-     <a class="btn btn-default btn-xs" href="/create">新規作成</a>	
+     </table><script inline="javascript">
+		function toggleFavorite(id, buttonElement) {
+		    const starSpan = buttonElement.querySelector('.star-icon');
+		    fetch(`/item/itemlists/${id}/favorite`, { method: 'POST' })
+		    .then(response => {
+		        if (response.ok) {
+		            const isFavorite = starSpan.innerText === '★';
+		            starSpan.innerText = isFavorite ? '☆' : '★';
+		            starSpan.style.color = isFavorite ? '#ccc' : '#ffcc00';
+		        }
+		    })
+		    .catch(error => console.error('Error:', error));
+		}
+		</script>
+     <a class="btn btn-default btn-xs" th:href="@{/item/create}">新規作成</a>	
 	</body>						
 	<footer>
 		<div class="container">

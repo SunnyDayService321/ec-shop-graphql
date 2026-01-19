@@ -10,7 +10,7 @@ import com.example.demo.models.InquiryForm;
 import com.example.demo.models.ItemForm;
 
 @Repository
-public interface ItemRepository extends JpaRepository<ItemForm, String>{
+public interface ItemRepository extends JpaRepository<ItemForm, Long>{
 	Optional<ItemForm> findById(Long id);
 	List<ItemForm> findAll();
 //	void delete(Long id);

@@ -37,7 +37,7 @@
 						<div id="navi">
 							<ul>
 								<li><a th:href="@{/}">ホーム</a></li>
-								<li><a th:href="@{/form}">商品登録</a></li>
+								<li><a th:href="@{item/create}">商品登録</a></li>
 							</ul>
 						</div>
 					</nav>
@@ -55,7 +55,7 @@
 					<div class="col span-12">
 						<div class="breadcrumb">
 							<ul>
-								<li><a th:href="@{/demo}">ホーム</a> > 商品登録</li>
+								<li><a th:href="@{/}">ホーム</a> > 商品登録</li>
 							</ul>
 						</div>
 
@@ -64,7 +64,7 @@
 						</th:block>
 
 						<h2 class="underline">商品編集</h2>
-						<form th:action="@{/itemlists/{id}/edit(id=*{id})}" th:object="${itemForm}"
+						<form th:action="@{/item/itemlists/{id}/edit(id=*{id})}" th:object="${itemForm}"
 							method="post">
 							<p>
 								<label for="name">商品名</label> <input class="full-width"
@@ -89,7 +89,7 @@
 							<p>
 								<input class="button" type="submit" value="更新">
 								 <div class="pull-right">
-                                 <a class="btn btn-link" href="/list">一覧画面へ</a>
+                                 <a class="btn btn-link" th:href="@{/item/list}">一覧画面へ</a>
 							</p>
 						</form>
 					</div>

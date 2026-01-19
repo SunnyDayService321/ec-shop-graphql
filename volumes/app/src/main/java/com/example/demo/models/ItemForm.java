@@ -37,11 +37,28 @@ public class ItemForm implements Serializable {
 	@Size(max = 400)
 	private String content;
 	
+	private boolean favorite;
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+	
 	public void clear() {
 		name = null;
 		price = null;
 		content = null;
 	}
+	
+	public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
 
 //	public void delete() {
 //		name = null;

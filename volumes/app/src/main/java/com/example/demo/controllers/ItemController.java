@@ -19,6 +19,7 @@ import com.example.demo.models.ItemForm;
 import com.example.demo.repositries.InquiryRepository;
 import com.example.demo.repositries.InquiryRepository3;
 import com.example.demo.repositries.ItemRepository;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 //import antlr.collections.List;
 import java.util.List;
@@ -26,17 +27,16 @@ import java.util.List;
 @Controller
 @RequestMapping("/item")
 public class ItemController {
-	
-	//InquiryRepository repository = new InquiryRepository()
-	@Autowired//アノテーション
-	InquiryRepository repository;
-	//インポートしないと定義されない
-	@Autowired
-	InquiryRepository3 repository3;
+
+//	//InquiryRepository repository = new InquiryRepository()
+//	@Autowired//アノテーション
+//	InquiryRepository repository;
+//	//インポートしないと定義されない
+//	@Autowired
+//	InquiryRepository3 repository3;
 
 	@Autowired
 	ItemRepository itemrepository;
-
 
 	@GetMapping("/create")
 	public String create(ItemForm itemForm) {
@@ -48,11 +48,19 @@ public class ItemController {
         model.addAttribute("itemlists", itemlists);
 		return "item/list";
 	}
+	
+	@PostMapping("/itemlists/{id}/favorite")
+	@ResponseBody
+	public void toggleFavorite(@PathVariable Long id) {
+	    ItemForm item = itemrepository.findById(id).get();
+	    item.setFavorite(!item.isFavorite());
+	    itemrepository.saveAndFlush(item);
+	}
     @GetMapping("itemlists/{id}/edit")
-  public String edit(@PathVariable Long id, Model model) { 
-    ItemForm itemForm = itemrepository.findById(id).get();
-      model.addAttribute("itemForm", itemForm);
-        return "item/edit";
+    public String edit(@PathVariable Long id, Model model) { 
+	    ItemForm itemForm = itemrepository.findById(id).get();
+	      model.addAttribute("itemForm", itemForm);
+	      return "item/edit";	
     }
     @GetMapping("itemlists/{id}/delete")
    public String delete(@PathVariable Long id, Model model) { 

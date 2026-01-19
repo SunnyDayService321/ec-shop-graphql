@@ -37,7 +37,7 @@
 						<div id="navi">
 							<ul>
 								<li><a th:href="@{/}">ホーム</a></li>
-								<li><a th:href="@{/form}">商品登録</a></li>
+								<li><a th:href="@{/item/create}">商品登録</a></li>
 							</ul>
 						</div>
 					</nav>
@@ -64,7 +64,7 @@
 						</th:block>
 
 						<h2 class="underline">商品登録</h2>
-						<form th:action="@{/create}" th:object="${itemForm}"
+						<form th:action="@{/item/create}" th:object="${itemForm}"
 							method="post">
 							<p>
 								<label for="name">商品名</label> <input class="full-width"
@@ -88,7 +88,7 @@
 							</p>
 							<p>
 								<input class="button" type="submit" value="登録">
-								 <a class="btn btn-link" href="/list">一覧画面へ</a>
+								 <a class="btn btn-link" th:href="@{/item/list}">一覧画面へ</a>
 							</p>
 						</form>
 					</div>

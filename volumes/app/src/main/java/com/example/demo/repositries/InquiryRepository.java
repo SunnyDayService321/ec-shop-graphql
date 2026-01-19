@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.models.InquiryForm;
 
 @Repository
-public interface InquiryRepository extends JpaRepository<InquiryForm, String>{
+public interface InquiryRepository extends JpaRepository<InquiryForm, Long>{
 	Optional<InquiryForm> findById(String id);
 	List<InquiryForm> findAll();
 }
