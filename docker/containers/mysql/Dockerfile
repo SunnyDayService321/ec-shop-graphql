@@ -1,4 +1,1 @@
-FROM mysql:5.7
-
-COPY my.cnf /etc/mysql/conf.d
-COPY initialize_data.sql /docker-entrypoint-initdb.d
+FROM --platform=linux/x86_64 mysql:5.7

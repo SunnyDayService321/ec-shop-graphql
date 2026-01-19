@@ -1,3 +1,1 @@
-FROM openjdk:11
-
-WORKDIR /app
+FROM amazoncorretto:11
