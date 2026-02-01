@@ -8,11 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.models.InquiryForm;
 import com.example.demo.models.ItemForm;
+import com.example.demo.models.ItemEntity;
 
 @Repository
-public interface ItemRepository extends JpaRepository<ItemForm, Long>{
-	Optional<ItemForm> findById(Long id);
-	List<ItemForm> findAll();
+public interface ItemRepository extends JpaRepository<ItemEntity, Long>{
+//	Optional<ItemForm> findById(Long id);
+//	List<ItemForm> findAll();
 //	void delete(Long id);
 //	void delete();
-}
+	}

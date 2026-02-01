@@ -8,6 +8,7 @@
 <link rel="stylesheet" media="all" th:href="@{/css/style.css}" />
 <script th:src="@{/js/jquery-2.1.4.min.js}"></script>
 <script th:src="@{/js/style.js}"></script>
+<script th:src="@{/js/favorite.js}"></script>
 
 <!-- Favicon -->
 <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
@@ -64,7 +65,7 @@
 						</th:block>
 
 						<h2 class="underline">商品登録</h2>
-						<form th:action="@{/item/itemlists/{id}/delete(id=*{id})}" th:object="${itemForm}"
+						<form th:action="@{/item/itemlists/{id}/delete(id=${itemForm.id})}" th:object="${itemForm}"
 							method="post">
 							<p>
 								<label for="name">商品名</label> <input class="full-width"
