@@ -28,4 +28,4 @@ function toggleFavorite(id, buttonElement) {
         console.error('Error:', error);
         alert('お気に入りの保存に失敗しました。');
     });
-}
+} 

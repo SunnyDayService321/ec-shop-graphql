@@ -14,22 +14,22 @@ import com.example.demo.repositries.ItemRepository;
 public class ItemService {
 	@Autowired
     private ItemRepository itemRepository;
-
-    @Transactional
-    public boolean toggleFavorite(Long id) {
-        // 1. 棚(Repository)から本の中身(Entity)を取り出す
-        ItemEntity item = itemRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("商品が見つかりません"));
-        
-        // 2. お気に入り状態を反転させる
-        item.setFavorite(!item.isFavorite());
-        
-        // 3. 書き換えた本を棚に戻す
-        itemRepository.saveAndFlush(item);
-        
-        // 今の状態を報告する
-        return item.isFavorite();
-    }
+//
+//    @Transactional
+//    public boolean toggleFavorite(Long id) {
+//        // 1. 棚(Repository)から本の中身(Entity)を取り出す
+//        ItemEntity item = itemRepository.findById(id)
+//            .orElseThrow(() -> new RuntimeException("商品が見つかりません"));
+//        
+//        // 2. お気に入り状態を反転させる
+//        item.setFavorite(!item.isFavorite());
+//        
+//        // 3. 書き換えた本を棚に戻す
+//        itemRepository.saveAndFlush(item);
+//        
+//        // 今の状態を報告する
+//        return item.isFavorite();
+//    }
 //	
 //    private boolean favorite;
 //

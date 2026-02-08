@@ -5,21 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.demo.models.InquiryForm;
-import com.example.demo.models.InquiryForm3;
 import com.example.demo.models.ItemForm;
 import com.example.demo.models.ItemEntity;
-import com.example.demo.repositries.InquiryRepository;
-import com.example.demo.repositries.InquiryRepository3;
-import com.example.demo.repositries.ItemRepository;
+import com.example.demo.services.FavoriteService;
 import com.example.demo.services.ItemService;
 
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,7 +36,10 @@ public class ItemController {
 //	ItemRepository itemrepository;
 	
 	@Autowired
-    private ItemService itemService1;
+    private ItemService itemService; // 一覧や保存用
+	
+	@Autowired
+    private FavoriteService favoriteService; // お気に入り専用
 	
 	// 司書さん（Service）を呼べるように追加
 //	@Autowired
@@ -60,10 +56,8 @@ public class ItemController {
 	@GetMapping("/list")
 	// Serviceに「画面表示用のFormリスト」をもらう
 	public String list(Model model) {
-		// Serviceからリストを受け取る
-	    List<ItemEntity> itemlists = itemService1.findAll();
-	    // modelに入れてHTMLへ渡す
-	    model.addAttribute("itemlists", itemlists);
+		// modelに入れてHTMLへ渡す
+	    model.addAttribute("itemlists", itemService.findAll());
 		return "item/list";
 	}
 	
@@ -83,7 +77,7 @@ public class ItemController {
     public boolean toggleFavorite(@PathVariable Long id) {
         // 今までここで「取得・反転・保存」をしていた処理を
         // Serviceのメソッド1行に丸投げ
-        return itemService1.toggleFavorite(id);
+        return favoriteService.toggle(id);
     }
 	
 //    @GetMapping("itemlists/{id}/edit")
@@ -96,11 +90,9 @@ public class ItemController {
 	// --- 編集画面の表示 ---
     @GetMapping("itemlists/{id}/edit")
     public String edit(@PathVariable Long id, Model model) { 
-        // Serviceに丸投げして、DBから1件取ってもらう
-        Optional<ItemEntity> itemEntity = itemService1.findById(id);
-        
+     
         // modelに入れてHTMLへ渡す
-        model.addAttribute("itemForm", itemEntity.get());
+        model.addAttribute("itemForm", itemService.findById(id).get());
         
         return "item/edit";	
         }
@@ -116,8 +108,8 @@ public class ItemController {
  // 削除確認画面を表示するための GET メソッド
     @GetMapping("itemlists/{id}/delete")
     public String deleteConfirm(@PathVariable Long id, Model model) { 
-        Optional<ItemEntity> itemEntity = itemService1.findById(id);
-        model.addAttribute("itemForm", itemEntity.get());
+    	// Serviceから取得した結果をそのまま model へ
+        model.addAttribute("itemForm", itemService.findById(id).get());
         model.addAttribute("message", "削除しますか？");
         return "item/delete";
     }
@@ -126,7 +118,7 @@ public class ItemController {
     @PostMapping("/itemlists/{id}/delete")
     public String delete(@PathVariable Long id, Model model) {
     	// 1. 削除を実行
-        itemService1.deleteById(id);
+        itemService.deleteById(id);
         
         // 2. 画面の入力欄（th:field）がエラーにならないよう、空のFormを入れ直す
         model.addAttribute("itemForm", new ItemForm());
@@ -154,7 +146,7 @@ public class ItemController {
     public String list_form(@Validated ItemForm itemForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) return "item/create";
 
-        itemService1.save(itemForm); 
+        itemService.save(itemForm); 
         
         itemForm.clear();
         model.addAttribute("message", "商品を登録しました。");
@@ -178,7 +170,7 @@ public class ItemController {
         if (bindingResult.hasErrors()) {
 			return "item/edit";
 		}
-	itemService1.save(itemForm); 
+	itemService.save(itemForm); 
 	
 	    itemForm.clear();
 	    model.addAttribute("message", "更新しました。");
