@@ -2,3 +2,4 @@
 /.metadata/
 volumes/db/data/
 volumes/app/.m2/
+**/.m2/
