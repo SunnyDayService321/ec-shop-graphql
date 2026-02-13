@@ -75,8 +75,8 @@ public class ItemController {
 	@PostMapping("/itemlists/{id}/favorite")
     @ResponseBody
     public boolean toggleFavorite(@PathVariable Long id) {
-        // 今までここで「取得・反転・保存」をしていた処理を
-        // Serviceのメソッド1行に丸投げ
+//		boolean a = itemService.toggleFavorite(id);
+//		return a;
         return favoriteService.toggle(id);
     }
 	

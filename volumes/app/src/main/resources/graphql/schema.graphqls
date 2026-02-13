@@ -1,0 +1,23 @@
+# データのまとまり（Payload）の定義
+type Payload {
+  token: String
+  user: User
+}
+
+# ユーザー情報の定義
+type User {
+  id: ID!
+  email: String!
+  createdAt: String
+  updatedAt: String
+}
+
+# ログイン処理の定義
+type Mutation {
+  login(email: String!, password: String!): Payload
+}
+
+# 取得処理（必須なので空でも定義）
+type Query {
+  me: User
+}
