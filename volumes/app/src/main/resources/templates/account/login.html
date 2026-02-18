@@ -97,44 +97,6 @@
 		<a href="#">TOP</a>
 	</p>
 
-	<script>
-		document.getElementById('loginForm').addEventListener('submit', async (e) => {
-			e.preventDefault();
-			
-			const email = document.getElementById('email').value;
-			const password = document.getElementById('password').value;
-			
-			// GraphQL Mutation の実行
-			const response = await fetch('/graphql', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					query: `
-						mutation Login($email: String!, $password: String!) {
-							login(email: $email, password: $password) {
-								token
-								user { id email }
-							}
-						}
-					`,
-					variables: { email, password }
-				})
-			});
-			
-			const result = await response.json();
-			
-			if (result.data && result.data.login) {
-				// ログイン成功
-				const token = result.data.login.token;
-				localStorage.setItem('authToken', token);
-				alert('ログインに成功しました！');
-				// リダイレクト先を適宜変更してください
-				window.location.href = '/';
-			} else {
-				// ログイン失敗
-				alert('ログインに失敗しました。メールアドレスとパスワードを確認してください。');
-			}
-		});
-	</script>
+	<script th:src="@{/js/login.js}"></script>
 </body>
 </html>
