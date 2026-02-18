@@ -15,7 +15,7 @@
 * **Database**: MySQL (永続化ボリューム設定済み)
 * **Infrastructure**: Docker Compose, Nginx (Reverse Proxy)
 
-##🚀 GraphQL 採用による設計の変化
+## 🚀 GraphQL 採用による設計の変化
 本プロジェクトでは REST 従来の 「リソースごとに Controller を作る設計」から脱却 し、GraphQL の 「Resolver（リゾルバ）によるデータ集約型設計」 を採用しています。
 * 単一エンドポイント: 全リクエストを /graphql で受理。
 * 柔軟なデータ取得: フロントエンド側で必要なフィールドのみを指定し、オーバーフェッチを防止。
