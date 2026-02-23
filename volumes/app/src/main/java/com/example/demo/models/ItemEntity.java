@@ -23,57 +23,54 @@ public class ItemEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+// フィールド
 	private long id;
     private String name;
     private String price;
     private String content;
     private boolean favorite;
-	
+    
+ // ゲッター（値を取得）
     public long getId() {
         return id;
     }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
+    
     public String getName() {
         return name;
+    }
+    
+    public String getPrice() {
+        return price;
+    }
+    
+    public String getContent() {
+        return content;
+    }
+    
+    public boolean isFavorite() {
+        return favorite;
+    }
+    
+    
+ // セッター（値を設定）
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getPrice() {
-        return price;
-    }
-
     public void setPrice(String price) {
         this.price = price;
-    }
-
-    public String getContent() {
-        return content;
     }
 
     public void setContent(String content) {
         this.content = content;
     }
-	
-    public boolean isFavorite() {
-        return favorite;
-    }
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
-
-	
-    
-//    public ItemEntity findById(Long id) {
-//        // 1行でRepositoryから取得して、いなければエラーを投げる
-//        return itemRepository.findById(id).orElseThrow(() -> new RuntimeException("見つかりません"));
-//    }
 
 }

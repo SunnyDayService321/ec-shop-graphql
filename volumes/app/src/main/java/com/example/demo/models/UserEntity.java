@@ -29,6 +29,10 @@ public class UserEntity {
     
     private LocalDateTime updatedAt; // 更新日時
     
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt; // 削除日時 (論理削除用)
+    
+ // Getter (Lombok @Data で自動生成されますが、取り敢えず視覚化)
     public String getPassword() {
         return this.password;
     }
@@ -36,7 +40,17 @@ public class UserEntity {
     public String getEmail() {
         return this.email;
     }
+    
+ // 保存前に日時を自動設定する
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 
-    // 必要に応じて論理削除用フラグを追加
-    // private LocalDateTime deletedAt;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
 }

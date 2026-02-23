@@ -29,7 +29,7 @@ public class AccountResolver {
             throw new RuntimeException("UNAUTHENTICATED");
         }
 
-        // 本来はここでJWTトークンを生成
+        // 本来はここでJWTトークンを生成だがDTO (Payload) の組み立て
         String token = "sample-jwt-token-for-" + user.getEmail();
         
         Payload payload = new Payload();
