@@ -41,16 +41,34 @@ public class UserEntity {
         return this.email;
     }
     
+    public Long getId() {
+    	return this.id;
+	}
+    
+    public LocalDateTime getDeletedAt() {
+    	return this.deletedAt;
+	}
+    
  // 保存前に日時を自動設定する
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+    	this.createdAt = LocalDateTime.now();
+    	this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    	this.updatedAt = LocalDateTime.now();
     }
+
+	public void setPassword(String password) {
+		this.password = password;
+		
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+		
+	}
 
 }
