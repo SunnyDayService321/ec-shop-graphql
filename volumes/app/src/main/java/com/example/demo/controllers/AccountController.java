@@ -148,5 +148,17 @@ public class AccountController {
         }
         
     }
+    /**
+     * U-AUTH-07: ログアウト処理
+     * フォーム（POST）からのリクエストを受け取り、セッションを破棄してログイン画面へ戻る
+     */
+    @PostMapping("/account/logout")
+    public String logout(HttpSession session) {
+        // セッションを無効化（保持しているuserIdなどのデータをすべて消去）
+        session.invalidate();
+        
+        // ログアウト後はログイン画面へリダイレクト
+        return "redirect:/account/login";
+    }
 
 }

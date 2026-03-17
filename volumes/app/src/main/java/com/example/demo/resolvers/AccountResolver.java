@@ -2,10 +2,14 @@ package com.example.demo.resolvers;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.example.demo.dto.Payload;
 import com.example.demo.models.UserEntity;
@@ -34,6 +38,14 @@ public class AccountResolver {
      // 認証失敗時はエラーを投げるか null を返す
             throw new RuntimeException("UNAUTHENTICATED");
         }
+        
+     // RequestContextHolderを使用してセッションにユーザーIDを保存
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        if (attr != null) {
+            HttpSession session = attr.getRequest().getSession(true);
+            session.setAttribute("userId", user.getId());
+        }
+        
         String token = "eyJhbGciOiJIUzI1Ni..." + user.getId();
         Payload payload = new Payload();
         payload.setToken(token);
@@ -65,6 +77,9 @@ public class AccountResolver {
 //        return payload;
 //    }
 
+    /**
+     * 新規登録処理
+     */
     @MutationMapping
     public Payload register(@Argument("input") Map<String, String> input) {
         // GraphQLの input: { email, password, passwordConfirm } を分解
@@ -84,16 +99,47 @@ public class AccountResolver {
     
     
     /**
-     * GQL-AUTH-04 の input RegisterInput に対応するクラス
-     * フィールド名は schema.graphqls と一致させる必要があります
+     * 会員情報更新処理
+     *  RequestContextHolderを使用して、メソッド内部でセッションとユーザーIDを取得します
+     */
+    @MutationMapping
+    public UserEntity updateProfile(@Argument UpdateProfileInput input) {
+        // セッションからログイン中のユーザーIDを取得
+    	ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+
+    	if (attr == null) {
+            throw new RuntimeException("INTERNAL_SERVER_ERROR");
+        }
+        
+        HttpSession session = attr.getRequest().getSession(false);
+
+        // ログイン状態の確認（セッションがない、またはuserIdがない場合はエラー）
+        if (session == null || session.getAttribute("userId") == null) {
+            throw new RuntimeException("UNAUTHENTICATED");
+        }
+
+        // セッションからログイン中のユーザーIDを取り出す
+        Long userId = (Long) session.getAttribute("userId");
+        
+        
+     // Service層へ処理を委譲してデータベースを更新
+        return accountService.updateProfile(
+            userId, 
+            input.getEmail(), 
+            input.getPassword(), 
+            input.getPasswordConfirm()
+        );
+    }
+
+    /**
+     * プロフィール更新用入力データクラス
      */
     @Data
-    public static class RegisterInput {
+    public static class UpdateProfileInput {
         private String email;
         private String password;
         private String passwordConfirm;
         
-     // Getter/Setterが必要（Lombokの@Dataを使わない場合）
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
         public String getPassword() { return password; }
@@ -101,4 +147,24 @@ public class AccountResolver {
         public String getPasswordConfirm() { return passwordConfirm; }
         public void setPasswordConfirm(String passwordConfirm) { this.passwordConfirm = passwordConfirm; }
     }
+
+    /**
+     * 新規登録用入力データクラス
+     * GQL-AUTH-04 の input RegisterInput に対応するクラス
+　   * フィールド名は schema.graphqls と一致させる必要がある
+     */
+    @Data
+    public static class RegisterInput {
+        private String email;
+        private String password;
+        private String passwordConfirm;
+        
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+        public String getPasswordConfirm() { return passwordConfirm; }
+        public void setPasswordConfirm(String passwordConfirm) { this.passwordConfirm = passwordConfirm; }
+    }
+
 }

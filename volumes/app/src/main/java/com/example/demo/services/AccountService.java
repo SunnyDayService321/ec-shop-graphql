@@ -101,5 +101,60 @@ public class AccountService {
 	    return userRepository.findById(userId)
 	            .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
 	}
+	
+	 /**
+     * U-AUTH-06: ログイン中の会員情報更新処理
+     * 設計書 GQL-AUTH-06 に基づき、入力された項目のみを更新する。
+     * * @param userId 更新対象のユーザーID
+     * @param email 新しいメールアドレス（任意）
+     * @param password 新しいパスワード（任意）
+     * @param passwordConfirm パスワード確認用（パスワード入力時は必須）
+     * @return 更新後のユーザー情報
+     */
+	@Transactional
+	public UserEntity updateProfile(Long userId, String email, String password, String passwordConfirm) {
+	    // 1. ユーザー特定
+	    UserEntity user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+	    
+	    // 2. バリデーション（全項目未入力チェック）
+	    boolean isEmailEmpty = (email == null || email.trim().isEmpty());
+        boolean isPasswordEmpty = (password == null || password.trim().isEmpty());
+
+	   
+//	    if ((email == null || email.isEmpty()) && (password == null || password.isEmpty())) {
+//	        throw new RuntimeException("EMPTY_INPUT");
+//	    }
+        if (isEmailEmpty && isPasswordEmpty) {
+	        throw new RuntimeException("EMPTY_INPUT"); // 設計書: 更新する項目を入力してください
+	    }
+
+	    // 3. メールアドレス更新がある場合
+	    if (email != null && !email.isEmpty() && !email.equals(user.getEmail())) {
+	    	// 他のユーザーが既にそのメールアドレスを使用していないかチェック
+	        if (userRepository.existsByEmail(email)) {
+	            throw new RuntimeException("EMAIL_ALREADY_EXISTS");
+	        }
+	        user.setEmail(email);
+	    }
+
+	    // 4. パスワード更新がある場合
+	    //if (password != null && !password.isEmpty()) {
+	    if (!isPasswordEmpty) {
+	    	 // パスワード一致チェック
+	        if (!password.equals(passwordConfirm)) {
+	            throw new RuntimeException("PASSWORD_MISMATCH");// 設計書: パスワードが一致しません
+	        }
+	        if (password.length() < 8) {
+	            throw new RuntimeException("PASSWORD_TOO_SHORT");// 設計書: パスワードは8文字以上で入力してください
+	        }
+	        // ハッシュ化して保存
+	        user.setPassword(passwordEncoder.encode(password));
+	    }
+
+	    // 5. 保存
+        // UserEntityに @UpdateTimestamp が設定されていれば、save時に updated_at が自動更新されます
+	    return userRepository.save(user);
+	}
 
 }
