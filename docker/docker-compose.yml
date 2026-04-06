@@ -6,29 +6,25 @@ services:
       - ./environments/common.env
       - ./environments/db.env
     volumes:
-      - ../volumes/db/data:/var/lib/mysql
+      # 相対パスに戻す（EC2内の実行ディレクトリからの相対パスになります）
+      - ./volumes/db/data:/var/lib/mysql
     ports:
-      - 3306:3306 # ホストOSのWorkBenchでDBの情報を見るために定義します。
+      - 3306:3306
   app:
     build: containers/spring
     working_dir: /app
     env_file:
       - ./environments/common.env
       - ./environments/db.env
-    # MavenのラッパーからSpringBootを起動します。リモートデバッグのパラメータを設定する
-    # javaコマンドで実行してしまうとホットリロードができなくなるのでMavenで起動する
-    # ホストOSからDockerにアクセス可能にするにはaddressの指定で"*"をつける(address=*:5005)
-    command: /app/mvnw clean spring-boot:run -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005"
+    # 本番に近い動作にするため、リモートデバッグ等は一旦外してもOKですが、そのままでも動きます
+    command: /app/mvnw clean spring-boot:run
     volumes:
-      # 「../volumes/app」を以下の絶対パスに書き換え
-      - /Users/a/git/menta/springboot_docker/springboot-dev-docker-template-master/volumes/app:/app
-      # 「../volumes/app/.m2」を以下の絶対パスに書き換え
-      - /Users/a/git/menta/springboot_docker/springboot-dev-docker-template-master/volumes/app/.m2:/root/.m2
-      # 「../volumes/web/static」を以下の絶対パスに書き換え
-      - /Users/a/git/menta/springboot_docker/springboot-dev-docker-template-master/volumes/web/static:/app/src/main/resources/static
+      # EC2上のカレントディレクトリからの相対パスに書き換え
+      - ./volumes/app:/app
+      - ./volumes/app/.m2:/root/.m2
+      - ./volumes/web/static:/app/src/main/resources/static
     ports:
-      - 8080:8080 # ホストOSからlocalhost:8080でページを確認する場合に定義
-      - 5005:5005 # リモートデバッグ用のポートです。ホストOSのIDEからアタッチする
+      - 8080:8080
     depends_on:
       - db
   web:
@@ -36,10 +32,11 @@ services:
     env_file:
       - ./environments/common.env
     volumes:
-      - ../volumes/web/static:/usr/share/nginx/www/ # 静的ファイルはSpringBootのプロジェクトでは管理せず、Webサーバー側で管理する
-      - ../volumes/web/ssl:/etc/nginx/cert/
-      - ../volumes/web/log:/var/log/nginx/
+      - ./volumes/web/static:/usr/share/nginx/www/
+      - ./volumes/web/ssl:/etc/nginx/cert/
+      - ./volumes/web/log:/var/log/nginx/
     ports:
+      - 80:80 # EC2では443(HTTPS)の前にまず80(HTTP)で繋がるか確認しましょう
       - 443:443
     depends_on:
       - app
